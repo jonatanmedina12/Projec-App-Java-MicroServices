@@ -1,4 +1,4 @@
-# Companies CRUD API
+# Companies MicroService
 
 API REST para la gestión de compañías y sus sitios web asociados.
 
