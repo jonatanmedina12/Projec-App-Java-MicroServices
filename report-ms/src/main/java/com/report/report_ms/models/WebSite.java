@@ -1,9 +1,11 @@
 package com.report.report_ms.models;
 
 
+import lombok.Builder;
+
 import java.io.Serializable;
 
-
+@Builder
 public class WebSite implements Serializable {
 
 
