@@ -1,11 +1,16 @@
 package com.report.report_ms.models;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
-@Builder
+
+
+
 public class WebSite implements Serializable {
 
 
@@ -17,11 +22,14 @@ public class WebSite implements Serializable {
     private Category category;
 
     private String description;
-
-    // Constructor vacío
+    public WebSite(Long id, String name, Category category, String description) {
+        this.id = id;
+        this.name = name;
+        this.category = category;
+        this.description = description;
+    }
     public WebSite() {
     }
-
     // Getters
     public Long getId() {
         return id;

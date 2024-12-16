@@ -1,7 +1,7 @@
 package com.report.report_ms.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Builder;
+
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -9,7 +9,6 @@ import java.util.List;
 
 
 @Data
-@Builder
 public class Company {
 
     private Long id;
@@ -26,9 +25,17 @@ public class Company {
     private List<WebSite> webSites;
 
     // Constructor vacío
+
+    public Company(Long id, String name, String founder, String logo, LocalDate foundationDate, List<WebSite> webSites) {
+        this.id = id;
+        this.name = name;
+        this.founder = founder;
+        this.logo = logo;
+        this.foundationDate = foundationDate;
+        this.webSites = webSites;
+    }
     public Company() {
     }
-
     // Getters
     public Long getId() {
         return id;
