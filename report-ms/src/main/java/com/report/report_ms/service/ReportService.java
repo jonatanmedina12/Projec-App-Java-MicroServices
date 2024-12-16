@@ -35,23 +35,23 @@ public class ReportService implements ReportInterface {
     @Override
     public String saveReport(String nameReport) {
         var format = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
         var placeHolders = this.reportHelper.getPlaceholdersFromTemplate(nameReport);
 
         var webSites = Stream.of(placeHolders.get(3))
-                .map(website -> WebSite.builder().name(website).build())
+                .map(website -> {
+                    WebSite site = new WebSite();
+                    site.setName(website);
+                    return site;
+                })
                 .toList();
 
+        Company company = new Company();
+        company.setName(placeHolders.get(0));
+        company.setLogo("Logo");
+        company.setFounder(placeHolders.get(2));
+        company.setFoundationDate(LocalDate.parse(String.format(placeHolders.get(1))));
+        company.setWebSites(webSites);
 
-
-
-        var company = Company.builder()
-                .name(placeHolders.get(0))
-                .logo("Logo")
-                .founder(placeHolders.get(2))
-                .foundationDate(LocalDate.parse(String.format(placeHolders.get(1))))
-                .webSites(webSites)
-                .build();
         this.companiesRepository.postByName(company);
 
         return "saved";

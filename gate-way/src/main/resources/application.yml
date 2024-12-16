@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: gate-way
+  profiles:
+    default: eureka-on
+
+server:
+  port: 4040
+
+# Eureka configuration
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true    # Importante para resolución de servicios
+    instance-id: ${spring.application.name}:${random.uuid}
+
