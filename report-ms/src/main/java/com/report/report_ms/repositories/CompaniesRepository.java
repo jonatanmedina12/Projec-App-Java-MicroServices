@@ -1,23 +1,38 @@
 package com.report.report_ms.repositories;
 
-import com.report.report_ms.beans.LoadBalancerConfiguration;
 import com.report.report_ms.models.Company;
-import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClient;
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Repository;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
-import java.util.Optional;
+@Repository
+public class CompaniesRepository {
+    private final WebClient webClient;
 
-@FeignClient(name = "companies-crud", url = "http://localhost:8080/companies-crud")
-public interface CompaniesRepository {
-    @GetMapping("/company/{name}")
-    Optional<Company> getByName(@PathVariable("name") String name);
+    public CompaniesRepository(@Value("${companies.base.url}") String companiesBaseUrl) {
+        this.webClient = WebClient.builder().baseUrl(companiesBaseUrl).build();
+    }
 
-    @PostMapping(path = "/company/")
-    Optional<Company>postByName(@RequestBody Company company);
+    public Mono<Company> getByName(String name) {
+        return webClient.get()
+                .uri("/company/{name}", name)
+                .retrieve()
+                .bodyToMono(Company.class);
+    }
 
+    public Mono<Company> postByName(Company company) {
+        return webClient.post()
+                .uri("/company/")
+                .bodyValue(company)
+                .retrieve()
+                .bodyToMono(Company.class);
+    }
 
-    @DeleteMapping(path = "/company/{name}")
-    void deleteByName(@PathVariable String name );
-
+    public Mono<Void> deleteByName(String name) {
+        return webClient.delete()
+                .uri("/company/{name}", name)
+                .retrieve()
+                .bodyToMono(Void.class);
+    }
 }

@@ -73,6 +73,8 @@ public class CompanyController {
             @ApiResponse(responseCode = "404",
                     description = "Compañía no encontrada")
     })
+
+
     @DeleteMapping(path = "{name}")
     public ResponseEntity<?> delete(
             @Parameter(description = "Nombre de la compañía a eliminar")

@@ -2,6 +2,8 @@ package com.report.report_ms.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.report.report_ms.utils.LocalDateDeserializer;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -20,6 +22,7 @@ public class Company {
     private String logo;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     private LocalDate foundationDate;
 
     private List<WebSite> webSites;

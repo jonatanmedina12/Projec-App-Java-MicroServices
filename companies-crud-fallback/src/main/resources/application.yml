@@ -1,0 +1,80 @@
+
+
+spring:
+  application:
+    name: companies-crud-fallback
+  profiles:
+    active: qa
+  cloud:
+    config:
+      enabled: true
+      fail-fast: true
+      retry:
+        initial-interval: 1500
+        multiplier: 1.5
+        max-attempts: 6
+    discovery:
+      enabled: true
+  config:
+    import: "optional:configserver:http://localhost:7777"
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
+        SQL: DEBUG
+    com.netflix.eureka: DEBUG
+    com.netflix.discovery: DEBUG
+
+server:
+  port: 8787
+  servlet:
+    context-path: /companies-crud-fallback
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+    metrics:
+      enabled: true
+  info:
+    env:
+      enabled: true
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 20
+    instance-id: ${spring.application.name}:${server.port}
+    hostname: localhost
+    homePageUrl: http://${eureka.instance.hostname}:${server.port}${server.servlet.context-path}/
+    statusPageUrl: http://${eureka.instance.hostname}:${server.port}${server.servlet.context-path}/actuator/info
+    healthCheckUrl: http://${eureka.instance.hostname}:${server.port}${server.servlet.context-path}/actuator/health
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    registry-fetch-interval-seconds: 5
+    healthcheck:
+      enabled: true
