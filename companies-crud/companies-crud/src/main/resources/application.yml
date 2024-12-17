@@ -32,26 +32,52 @@ spring:
         max-attempts: 6
     discovery:
       enabled: true
+    loadbalancer:
+      ribbon:
+        enabled: false
   config:
     import: "optional:configserver:http://localhost:7777"
 
-logging:
-  level:
-    org:
-      hibernate:
-        type:
-          descriptor:
-            sql:
-              BasicBinder: TRACE
-        SQL: DEBUG
-    com.netflix.eureka: DEBUG
-    com.netflix.discovery: DEBUG
-
+# Feign Configuration
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: full
+  circuitbreaker:
+    enabled: true
+    alphanumeric-ids:
+      enabled: true
+# Server Configuration
 server:
   port: 8080
   servlet:
     context-path: /companies-crud
 
+# Eureka Configuration
+eureka:
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 20
+    instance-id: ${spring.application.name}:${server.port}
+    hostname: localhost
+    homePageUrl: http://${eureka.instance.hostname}:${server.port}${server.servlet.context-path}/
+    statusPageUrl: http://${eureka.instance.hostname}:${server.port}${server.servlet.context-path}/actuator/info
+    healthCheckUrl: http://${eureka.instance.hostname}:${server.port}${server.servlet.context-path}/actuator/health
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    registry-fetch-interval-seconds: 5
+    healthcheck:
+      enabled: true
+
+
+# Management Configuration
 management:
   endpoints:
     web:
@@ -73,21 +99,17 @@ management:
     readinessstate:
       enabled: true
 
-eureka:
-  instance:
-    prefer-ip-address: true
-    lease-renewal-interval-in-seconds: 10
-    lease-expiration-duration-in-seconds: 20
-    instance-id: ${spring.application.name}:${server.port}
-    hostname: localhost
-    homePageUrl: http://${eureka.instance.hostname}:${server.port}${server.servlet.context-path}/
-    statusPageUrl: http://${eureka.instance.hostname}:${server.port}${server.servlet.context-path}/actuator/info
-    healthCheckUrl: http://${eureka.instance.hostname}:${server.port}${server.servlet.context-path}/actuator/health
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
-    registry-fetch-interval-seconds: 5
-    healthcheck:
-      enabled: true
+# Logging Configuration
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
+        SQL: DEBUG
+    com.netflix.eureka: DEBUG
+    com.netflix.discovery: DEBUG
+    # Agregar logging para Feign
+    org.springframework.cloud.openfeign: DEBUG
