@@ -48,6 +48,15 @@ feign:
   circuitbreaker:
     enabled: true
 
+cloud:
+  stream:
+    kafka:
+      binder:
+        brokers: localhost:9092
+    function:
+      bindings:
+        consumerReport-out-0:
+          destination: consumerReport
 
 logging:
   level:

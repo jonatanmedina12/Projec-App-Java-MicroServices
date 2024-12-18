@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: report-listener
+  profiles:
+    active: qa
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
+    stream:
+        kafka:
+          binder:
+            brokers: localhost:9092
+        function:
+          bindings:
+            consumerReport-in-0: #consumerReport-out => consumerReport <=  consumerReport-in
+              destination: consumerReport
+  data:
+    mongodb:
+      authentication-database: admin
+      host: localhost
+      port: 27017
+      username: sa
+      password: sa
+      database: reports  # Agrega esta línea para especificar la base de datos
+
+
+
+server:
+  port: 0
+
+# Eureka configuration
+
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
+
