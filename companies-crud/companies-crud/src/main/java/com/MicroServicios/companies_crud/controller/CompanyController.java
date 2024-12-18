@@ -3,6 +3,8 @@ package com.MicroServicios.companies_crud.controller;
 
 import com.MicroServicios.companies_crud.entities.Company;
 import com.MicroServicios.companies_crud.services.CompanyService;
+import io.micrometer.core.annotation.Timed;
+import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -28,6 +30,8 @@ public class CompanyController {
     @ApiResponse(responseCode = "200", description = "Compañía encontrada")
     @ApiResponse(responseCode = "404", description = "Compañía no encontrada")
     @GetMapping(path = "{name}")
+    @Observed(name = "company.name")
+    @Timed(value = "company.name")
     public ResponseEntity<Company>get(@PathVariable String name){
 
 

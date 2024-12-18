@@ -6,6 +6,7 @@ import com.report.report_ms.models.Company;
 import com.report.report_ms.models.WebSite;
 import com.report.report_ms.repositories.CompaniesFallbackRepository;
 import com.report.report_ms.repositories.CompaniesRepository;
+import com.report.report_ms.streams.ReportPublisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ public class ReportService implements ReportInterface {
 
     @Autowired
     private Resilience4JCircuitBreakerFactory resilience4JCircuitBreakerFactory;
+
+    @Autowired
+    private ReportPublisher reportPublisher;
 
 
     private Logger log = LoggerFactory.getLogger(ReportService.class);
@@ -76,7 +80,7 @@ public class ReportService implements ReportInterface {
         }
 
         company.setWebSites(webSites);
-
+        this.reportPublisher.publishReport(nameReport);
         this.companiesRepository.postByName(company);
 
         return "saved";
