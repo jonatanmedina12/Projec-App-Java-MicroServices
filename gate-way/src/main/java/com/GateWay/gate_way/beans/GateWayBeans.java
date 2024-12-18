@@ -1,5 +1,6 @@
 package com.GateWay.gate_way.beans;
 
+import com.GateWay.gate_way.filters.AuthFilter;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
@@ -11,6 +12,12 @@ import java.time.Duration;
 
 @Configuration
 public class GateWayBeans {
+
+    private  AuthFilter authFilter;
+
+    public GateWayBeans(AuthFilter authFilter) {
+        this.authFilter = authFilter;
+    }
 
     private CircuitBreakerConfig createCircuitBreakerConfig() {
         return CircuitBreakerConfig.custom()
@@ -61,6 +68,39 @@ public class GateWayBeans {
                 .route(route -> route
                         .path("/report-ms/report/*")
                         .filters(f -> f
+                                .circuitBreaker(config -> config
+                                        .setName("reportCircuitBreaker")
+                                        .setFallbackUri("forward:/report-ms-fallback/fallback")))
+                        .uri("lb://report-ms")
+                )
+                .build();
+    }
+
+    @Bean
+    @Profile(value = "oauth2")
+    public RouteLocator routeLocatorOauth2(RouteLocatorBuilder builder) {
+        return builder
+                .routes()
+                // Ruta para el auth-server
+                .route(route -> route
+                        .path("/auth-server/**")
+                        .uri("lb://auth-server")
+                )
+                // Ruta para companies-crud con autenticación
+                .route(route -> route
+                        .path("/companies-crud/company/*")
+                        .filters(f -> f
+                                .filter(authFilter)
+                                .circuitBreaker(config -> config
+                                        .setName("companiesCircuitBreaker")
+                                        .setFallbackUri("forward:/companies-crud-fallback/fallback")))
+                        .uri("lb://companies-crud")
+                )
+                // Ruta para report-ms con autenticación
+                .route(route -> route
+                        .path("/report-ms/report/*")
+                        .filters(f -> f
+                                .filter(authFilter)
                                 .circuitBreaker(config -> config
                                         .setName("reportCircuitBreaker")
                                         .setFallbackUri("forward:/report-ms-fallback/fallback")))
