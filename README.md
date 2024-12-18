@@ -1,94 +1,101 @@
-# Companies MicroService
+# Microservicios Spring Cloud & Spring Boot 🚀
 
-API REST para la gestión de compañías y sus sitios web asociados.
+Este proyecto implementa una arquitectura de microservicios moderna utilizando Spring Boot y Spring Cloud, diseñada para gestionar operaciones CRUD de empresas con capacidades de reportería y observabilidad.
 
-## Tecnologías Utilizadas
+## 🏗️ Arquitectura
 
-- Java 21
-- Spring Boot 3.2.1
-- PostgreSQL
-- Spring Data JPA
-- Swagger/OpenAPI
+El sistema está compuesto por los siguientes componentes:
 
-## Requisitos Previos
+### 🌟 Servicios Core
 
-- Java JDK 21
-- Maven 3.9.5+
-- PostgreSQL 15+
+- **Discovery Server**: Eureka Server para registro y descubrimiento de servicios
+- **Config Server**: Gestión centralizada de configuración con Git
+- **API Gateway**: Punto de entrada único para todas las peticiones
+- **Companies CRUD**: Servicio principal para operaciones CRUD de empresas
+- **Report MS**: Microservicio de generación de reportes
+- **Report Listener**: Consumidor de eventos para procesamiento de reportes
 
-## Configuración de Base de Datos
+### 🔐 Autenticación y Respaldo
 
-1. Crear una base de datos en PostgreSQL:
-```
-sql
--- table company
-create table if not exists company(
-                                      id serial primary key,
-                                      "name" varchar(32) not null unique,
-    founder varchar(128),
-    logo varchar(255),
-    foundation_date date
-    );
+- **Auth Server**: Servicio de autenticación
+- **Companies Fallback**: Servicio de respaldo para el servicio de empresas
 
--- index for name
-create index name_company
-    on company("name");
+### 📊 Observabilidad
 
--- table web site
-create table if not exists web_site(
-                                       id serial primary key,
-                                       id_company bigint,
-                                       "name" varchar(32) not null unique,
-    category varchar(32) not null,
-    description text,
-    constraint fk_company
-    foreign key(id_company)
-    references company(id)
-    on delete cascade
-    );
-```
-## Configurar las credenciales en application.properties:
-```
-  spring.datasource.url=jdbc:postgresql://localhost:5432/companies
-  spring.datasource.username=tu_usuario
-  spring.datasource.password=tu_contraseña
-```
-## Instalación y Ejecución
-```
-git clone 
+Sistema completo de observabilidad implementado con:
+- Grafana
+- OpenTelemetry
+- Docker
 
-```
-## Compilar el proyecto:
-```
-mvn clean install
-```
+### 🔄 Mensajería
 
-## Documentación API
+- **Kafka MSA**: Sistema de mensajería para comunicación asíncrona entre servicios
 
-```
-http://localhost:8080/companies-crud/swagger-ui.html
+## 💻 Tecnologías Utilizadas
 
-```
-## Endpoints/Compañías
+- **Spring Boot**: Framework base para los microservicios
+- **Spring Cloud**: Herramientas para sistemas distribuidos
+- **Docker**: Containerización de servicios
+- **Kafka**: Sistema de mensajería
+- **MongoDB**: Base de datos NoSQL
+- **PostgreSQL**: Base de datos relacional
+- **OpenTelemetry**: Instrumentación y trazabilidad
+- **Grafana**: Visualización de métricas y logs
 
-```
-GET /company/{name} - Obtener compañía por nombre
-POST /company - Crear nueva compañía
-PUT /company/{name} - Actualizar compañía existente
-DELETE /company/{name} - Eliminar compañía
-```
-## Manejo de Errores
-La API incluye manejo de errores para:
-Duplicados
-Recursos no encontrados
-Errores de validación
-Errores internos del servidor
+## 🔧 Configuración del Entorno
 
-## Seguridad
+1. **Prerequisitos**
+   - Java 21+
+   - Docker & Docker Compose
+   - Maven
+   - Git
 
-Validación de datos de entrada
-Manejo de excepciones global
-Restricciones de base de datos
+2. **Servicios de Infraestructura**
+   ```bash
+   docker-compose up -d
+   ```
 
-## Licencia
-Este proyecto está bajo la Licencia MIT - ver el archivo LICENSE.md para más detalles.
+3. **Orden de Inicio de Servicios**
+   1. Discovery Server
+   2. Config Server
+   3. API Gateway
+   4. Servicios de Negocio
+
+## 🚦 Endpoints Principales
+
+- **Discovery Server**: `http://localhost:8761`
+- **API Gateway**: `http://localhost:8080`
+- **Config Server**: `http://localhost:8888`
+- **Companies CRUD**: `http://localhost:[puerto_dinámico]`
+- **Report Service**: `http://localhost:[puerto_dinámico]`
+
+## 📈 Monitoreo y Observabilidad
+
+- **Grafana**: `http://localhost:3000`
+- **OpenTelemetry Collector**: `http://localhost:4317`
+
+
+
+## 💡 Características Principales
+
+- Arquitectura basada en microservicios
+- Configuración centralizada
+- Service discovery
+- Circuit breaker pattern
+- Distributed tracing
+- Logging centralizado
+- Métricas en tiempo real
+- Mensajería asíncrona
+- Seguridad centralizada
+
+## 🤝 Contribución
+
+1. Fork el repositorio
+2. Cree una rama para su característica (`git checkout -b feature/AmazingFeature`)
+3. Commit sus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abra un Pull Request
+
+## 📝 Licencia
+
+Este proyecto está bajo la Licencia MIT - vea el archivo [LICENSE.md](LICENSE.md) para más detalles.
