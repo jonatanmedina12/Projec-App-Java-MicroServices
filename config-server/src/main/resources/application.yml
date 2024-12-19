@@ -2,7 +2,7 @@ spring:
   application:
     name: config-server
   profiles:
-    active: git     # Cambiado a 'git' para activar el perfil Git
+    active: git
   cloud:
     config:
       server:
@@ -10,7 +10,7 @@ spring:
           uri: https://github.com/jonatanmedina12/MicroService-Java-Keys.git
           default-label: main
           clone-on-start: true
-        bootstrap: false    # Explícitamente configurado como false
+        bootstrap: false
 
 server:
   port: 7777
