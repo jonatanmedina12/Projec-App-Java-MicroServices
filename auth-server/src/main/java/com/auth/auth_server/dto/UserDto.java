@@ -9,6 +9,8 @@ public class UserDto {
     @NotBlank(message = "La contraseña es requerida")
     private String password;
 
+
+
     // Constructor vacío
     public UserDto() {
     }
