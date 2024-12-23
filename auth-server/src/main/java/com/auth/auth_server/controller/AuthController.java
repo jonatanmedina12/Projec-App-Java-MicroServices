@@ -1,5 +1,6 @@
 package com.auth.auth_server.controller;
 
+import com.auth.auth_server.dto.LoginRequestDto;
 import com.auth.auth_server.dto.TokenDto;
 import com.auth.auth_server.dto.UserDto;
 import com.auth.auth_server.service.AuthService;
@@ -30,11 +31,8 @@ public class AuthController {
     @ApiResponse(responseCode = "200", description = "Login exitoso")
     @ApiResponse(responseCode = "401", description = "Credenciales inválidas")
     @PostMapping("/login")
-    public ResponseEntity<TokenDto> login(
-            @Valid @RequestBody UserDto userDto
-    ) {
-        TokenDto token = authService.login(userDto);
-        return ResponseEntity.ok(token);
+    public ResponseEntity<TokenDto> login(@RequestBody LoginRequestDto loginRequest) {
+        return ResponseEntity.ok(authService.login(loginRequest));
     }
 
 

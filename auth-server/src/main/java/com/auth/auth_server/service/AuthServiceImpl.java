@@ -1,5 +1,6 @@
 package com.auth.auth_server.service;
 
+import com.auth.auth_server.dto.LoginRequestDto;
 import com.auth.auth_server.dto.TokenDto;
 import com.auth.auth_server.dto.UserDto;
 import com.auth.auth_server.entities.UserEntity;
@@ -22,11 +23,13 @@ public class AuthServiceImpl implements AuthService {
     private  UserRepository userRepository;
     private  PasswordEncoder passwordEncoder;
     private  JwtHelper jwtHelper;
+    private  RecaptchaService recaptchaService;
 
-    public AuthServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtHelper jwtHelper) {
+    public AuthServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtHelper jwtHelper,RecaptchaService recaptchaService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtHelper = jwtHelper;
+        this.recaptchaService = recaptchaService;
     }
     @Override
     public UserDto register(UserDto userDto) {
@@ -54,19 +57,24 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public TokenDto login(UserDto userDto) {
+    public TokenDto login(LoginRequestDto loginRequestDto) {
         try {
-            UserEntity user = userRepository.findByUsername(userDto.getUsername())
+
+            recaptchaService.validateToken(loginRequestDto.getRecaptchaToken());
+
+            UserEntity user = userRepository.findByUsername(loginRequestDto.getUsername())
                     .orElseThrow(() -> new ResponseStatusException(
                             HttpStatus.UNAUTHORIZED,
                             USER_NOT_FOUND_MSG
                     ));
 
-            validatePassword(userDto.getPassword(), user.getPassword());
+            validatePassword(loginRequestDto.getPassword(), user.getPassword());
 
             String token = jwtHelper.createToken(user.getUsername());
+
             return TokenDto.builder()
                     .accessToken(token)
+                    .username(user.getUsername())
                     .build();
         } catch (Exception e) {
             throw new ResponseStatusException(
